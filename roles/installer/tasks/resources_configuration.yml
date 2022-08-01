@@ -27,6 +27,29 @@
   set_fact:
     _control_plane_ee_image: "{{ _custom_control_plane_ee_image | default(lookup('env', 'RELATED_IMAGE_CONTROL_PLANE_EE')) | default(_control_plane_ee_image, true) }}"
 
+- name: Check for Receptor CA
+  k8s_info:
+    kind: Secret
+    namespace: '{{ ansible_operator_meta.namespace }}'
+    name: '{{ ansible_operator_meta.name }}-receptor-ca'
+  register: _receptor_ca
+  no_log: "{{ no_log }}"
+
+- name: Create Receptor Mesh CA
+  block:
+    - name: Generate Receptor CA cert and key
+      command: |
+        receptor --cert-init commonname="{{ ansible_operator_meta.name }} Receptor Root CA" \
+          bits="4096" outcert="/tmp/{{ ansible_operator_meta.name }}-receptor-ca.crt" \
+          outkey="/tmp/{{ ansible_operator_meta.name }}-receptor-ca.key"
+
+    - name: Create Receptor CA secret
+      k8s:
+        apply: true
+        definition: "{{ lookup('template', 'receptor_ca_secret.yaml.j2') }}"
+      no_log: "{{ no_log }}"
+  when: not _receptor_ca['resources'] | default([]) | length
+
 - name: Apply Resources
   k8s:
     apply: yes

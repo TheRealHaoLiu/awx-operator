@@ -12,3 +12,7 @@ RUN ansible-galaxy collection install -r ${HOME}/requirements.yml \
 COPY watches.yaml ${HOME}/watches.yaml
 COPY roles/ ${HOME}/roles/
 COPY playbooks/ ${HOME}/playbooks/
+
+# TODO: this is only needed if we use receptor to generate the mesh CA.
+# We can probably use openssl for that.
+COPY --from=quay.io/ansible/receptor:devel /usr/bin/receptor /usr/bin/receptor

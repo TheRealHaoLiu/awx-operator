@@ -246,33 +246,3 @@ data:
     unixsocketperm 777
     port 0
     bind 127.0.0.1
-  receptor_conf: |
-    ---
-    - log-level: debug
-
-    - control-service:
-        service: control
-        filename: /var/run/receptor/receptor.sock
-        permissions: 0660
-
-    - local-only:
-
-    - work-command:
-        worktype: local
-        command: ansible-runner
-        params: worker
-        allowruntimeparams: true
-
-    - work-kubernetes:
-        worktype: kubernetes-runtime-auth
-        authmethod: runtime
-        allowruntimeauth: true
-        allowruntimepod: true
-        allowruntimeparams: true
-
-    - work-kubernetes:
-        worktype: kubernetes-incluster-auth
-        authmethod: incluster
-        allowruntimeauth: true
-        allowruntimepod: true
-        allowruntimeparams: true
