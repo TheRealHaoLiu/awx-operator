@@ -15,55 +15,57 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # needed so that git describe --tag works
 
-
-      - name: git describe --tag
+      - name: Set VERSION
         run: |
-          echo "GIT_TAG=$(git describe --tag)"
+          echo "VERSION=$(git describe --tags)" >>${GITHUB_ENV}
 
+      - name: Set lower case owner name
+        run: |
+          echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
+        env:
+          OWNER: '${{ github.repository_owner }}'
 
-      # - name: Set lower case owner name
-      #   run: |
-      #     echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
-      #   env:
-      #     OWNER: '${{ github.repository_owner }}'
+      - name: Set ARCH environment variable
+        run: |
+          echo "ARCH=$(case $(uname -m) in x86_64) echo -n amd64 ;; aarch64) echo -n arm64 ;; *) echo -n $(uname -m) ;; esac)" >>${GITHUB_ENV}
 
-      # - name: Set ARCH environment variable
-      #   run: |
-      #     echo "ARCH=$(case $(uname -m) in x86_64) echo -n amd64 ;; aarch64) echo -n arm64 ;; *) echo -n $(uname -m) ;; esac)" >>${GITHUB_ENV}
+      - name: Set OS environment variable
+        run: |
+          echo "OS=$(uname | awk '{print tolower($0)}')" >>${GITHUB_ENV}
 
-      # - name: Set OS environment variable
-      #   run: |
-      #     echo "OS=$(uname | awk '{print tolower($0)}')" >>${GITHUB_ENV}
+      - name: Install operator-sdk
+        run: |
+          echo "Installing operator-sdk ${OPERATOR_SDK_DL_URL}" && \
+          curl -LO ${OPERATOR_SDK_DL_URL}/operator-sdk_${OS}_${ARCH} && \
+          chmod +x operator-sdk_${OS}_${ARCH} && \
+          sudo mkdir -p /usr/local/bin/ && \
+          sudo mv operator-sdk_${OS}_${ARCH} /usr/local/bin/operator-sdk && \
+          operator-sdk version
+        env:
+          OPERATOR_SDK_DL_URL: https://github.com/operator-framework/operator-sdk/releases/download/v1.26.0
 
-      # - name: Install operator-sdk
-      #   run: |
-      #     echo "Installing operator-sdk ${OPERATOR_SDK_DL_URL}" && \
-      #     curl -LO ${OPERATOR_SDK_DL_URL}/operator-sdk_${OS}_${ARCH} && \
-      #     chmod +x operator-sdk_${OS}_${ARCH} && \
-      #     sudo mkdir -p /usr/local/bin/ && \
-      #     sudo mv operator-sdk_${OS}_${ARCH} /usr/local/bin/operator-sdk && \
-      #     operator-sdk version
-      #   env:
-      #     OPERATOR_SDK_DL_URL: https://github.com/operator-framework/operator-sdk/releases/download/v1.26.0
+      - name: Log in to registry
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      # - name: Log in to registry
-      #   run: |
-      #     echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Build and Push awx-operator Image
+        run: |
+          IMAGE_TAG_BASE=ghcr.io/${OWNER_LC}/awx-operator \
+          make docker-build docker-push && \
+          docker tag ${IMAGE_TAG_BASE}/awx-operator:${VERSION} ${IMAGE_TAG_BASE}/awx-operator:${OWNER_LC} && \
+          docker push ${IMAGE_TAG_BASE}/awx-operator:${OWNER_LC}
 
-      # - name: Build and Push awx-operator Image
-      #   run: |
-      #     IMAGE_TAG_BASE=ghcr.io/${OWNER_LC}/awx-operator \
-      #     make docker-build docker-push
+      - name: Build bundle manifests
+        run: |
+          IMAGE_TAG_BASE=ghcr.io/${OWNER_LC}/awx-operator \
+          make bundle
 
-      # - name: Build bundle manifests
-      #   run: |
-      #     IMAGE_TAG_BASE=ghcr.io/${OWNER_LC}/awx-operator \
-      #     make bundle
-
-      # - name: Build and Push awx-operator Bundle
-      #   run: |
-      #     IMAGE_TAG_BASE=ghcr.io/${OWNER_LC}/awx-operator \
-      #     make bundle-build bundle-push
+      - name: Build and Push awx-operator Bundle
+        run: |
+          IMAGE_TAG_BASE=ghcr.io/${OWNER_LC}/awx-operator \
+          make bundle-build bundle-push
+          docker tag ${IMAGE_TAG_BASE}/awx-operator-bundle:${VERSION} ${IMAGE_TAG_BASE}/awx-operator:${OWNER_LC} && \
+          docker push ${IMAGE_TAG_BASE}/awx-operator-bundle:${OWNER_LC}
 
