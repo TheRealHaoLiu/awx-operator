@@ -52,11 +52,10 @@ jobs:
 
       - name: Build and Push awx-operator Image
         run: |
+          IMAGE_TAG_BASE=ghcr.io/${OWNER_LC}/awx-operator \
           make docker-build docker-push && \
           docker tag ${IMAGE_TAG_BASE}/awx-operator:${VERSION} ${IMAGE_TAG_BASE}/awx-operator:${GITHUB_REF##*/} && \
           docker push ${IMAGE_TAG_BASE}/awx-operator:${GITHUB_REF##*/}
-        env:
-          IMAGE_TAG_BASE: ghcr.io/${OWNER_LC}/awx-operator
 
       - name: Build bundle manifests
         run: |
