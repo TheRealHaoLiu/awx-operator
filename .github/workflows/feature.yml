@@ -65,11 +65,11 @@ jobs:
       - name: Build and Push awx-operator Bundle
         run: |
           make bundle-build bundle-push
-          docker tag ${IMAGE_TAG_BASE}-bundle:${VERSION} ${IMAGE_TAG_BASE}-bundle:${GITHUB_REF##*/}
+          docker tag ${IMAGE_TAG_BASE}-bundle:v${VERSION} ${IMAGE_TAG_BASE}-bundle:${GITHUB_REF##*/}
           docker push ${IMAGE_TAG_BASE}-bundle:${GITHUB_REF##*/}
 
       - name: Build and Push awx-operator Catalog
         run: |
           make catalog-build catalog-push
-          docker tag ${IMAGE_TAG_BASE}-catalog:${VERSION} ${IMAGE_TAG_BASE}-catalog:${GITHUB_REF##*/}
+          docker tag ${IMAGE_TAG_BASE}-catalog:v${VERSION} ${IMAGE_TAG_BASE}-catalog:${GITHUB_REF##*/}
           docker push ${IMAGE_TAG_BASE}-catalog:${GITHUB_REF##*/}
