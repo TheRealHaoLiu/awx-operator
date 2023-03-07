@@ -71,5 +71,5 @@ jobs:
       - name: Build and Push awx-operator Catalog
         run: |
           make catalog-build catalog-push && \
-          docker tag ${IMAGE_TAG_BASE}-catalog:${VERSION} ${IMAGE_TAG_BASE}:${GITHUB_REF##*/} && \
+          docker tag ${IMAGE_TAG_BASE}-catalog:${VERSION} ${IMAGE_TAG_BASE}-catalog:${GITHUB_REF##*/} && \
           docker push ${IMAGE_TAG_BASE}-catalog:${GITHUB_REF##*/}
