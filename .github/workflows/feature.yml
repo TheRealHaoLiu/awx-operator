@@ -54,8 +54,8 @@ jobs:
 
       - name: Build and Push awx-operator Image
         run: |
-          make docker-build docker-push && \
-          docker tag ${IMAGE_TAG_BASE}:${VERSION} ${IMAGE_TAG_BASE}:${GITHUB_REF##*/} && \
+          make docker-build docker-push
+          docker tag ${IMAGE_TAG_BASE}:${VERSION} ${IMAGE_TAG_BASE}:${GITHUB_REF##*/}
           docker push ${IMAGE_TAG_BASE}:${GITHUB_REF##*/}
 
       - name: Build bundle manifests
@@ -64,12 +64,12 @@ jobs:
 
       - name: Build and Push awx-operator Bundle
         run: |
-          make bundle-build bundle-push && \
-          docker tag ${IMAGE_TAG_BASE}-bundle:${VERSION} ${IMAGE_TAG_BASE}-bundle:${GITHUB_REF##*/} && \
+          make bundle-build bundle-push
+          docker tag ${IMAGE_TAG_BASE}-bundle:${VERSION} ${IMAGE_TAG_BASE}-bundle:${GITHUB_REF##*/}
           docker push ${IMAGE_TAG_BASE}-bundle:${GITHUB_REF##*/}
 
       - name: Build and Push awx-operator Catalog
         run: |
-          make catalog-build catalog-push && \
-          docker tag ${IMAGE_TAG_BASE}-catalog:${VERSION} ${IMAGE_TAG_BASE}-catalog:${GITHUB_REF##*/} && \
+          make catalog-build catalog-push
+          docker tag ${IMAGE_TAG_BASE}-catalog:${VERSION} ${IMAGE_TAG_BASE}-catalog:${GITHUB_REF##*/}
           docker push ${IMAGE_TAG_BASE}-catalog:${GITHUB_REF##*/}
