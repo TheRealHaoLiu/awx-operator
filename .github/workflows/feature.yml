@@ -53,6 +53,6 @@ jobs:
       - name: Build and Push awx-operator Bundle
         run: |
           IMAGE_TAG_BASE=ghcr.io/${OWNER_LC}/awx-operator \
-          ERSION=${GITHUB_REF##*/} \
+          VERSION=${GITHUB_REF##*/} \
           make bundle bundle-build bundle-push
 
