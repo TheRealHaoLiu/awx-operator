@@ -15,48 +15,52 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set lower case owner name
+      - name: git describe --tag
         run: |
-          echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
-        env:
-          OWNER: '${{ github.repository_owner }}'
+          echo "GIT_TAG=$(git describe --tag)"
 
-      - name: Set ARCH environment variable
-        run: |
-          echo "ARCH=$(case $(uname -m) in x86_64) echo -n amd64 ;; aarch64) echo -n arm64 ;; *) echo -n $(uname -m) ;; esac)" >>${GITHUB_ENV}
 
-      - name: Set OS environment variable
-        run: |
-          echo "OS=$(uname | awk '{print tolower($0)}')" >>${GITHUB_ENV}
+      # - name: Set lower case owner name
+      #   run: |
+      #     echo "OWNER_LC=${OWNER,,}" >>${GITHUB_ENV}
+      #   env:
+      #     OWNER: '${{ github.repository_owner }}'
 
-      - name: Install operator-sdk
-        run: |
-          echo "Installing operator-sdk ${OPERATOR_SDK_DL_URL}" && \
-          curl -LO ${OPERATOR_SDK_DL_URL}/operator-sdk_${OS}_${ARCH} && \
-          chmod +x operator-sdk_${OS}_${ARCH} && \
-          sudo mkdir -p /usr/local/bin/ && \
-          sudo mv operator-sdk_${OS}_${ARCH} /usr/local/bin/operator-sdk && \
-          operator-sdk version
-        env:
-          OPERATOR_SDK_DL_URL: https://github.com/operator-framework/operator-sdk/releases/download/v1.26.0
+      # - name: Set ARCH environment variable
+      #   run: |
+      #     echo "ARCH=$(case $(uname -m) in x86_64) echo -n amd64 ;; aarch64) echo -n arm64 ;; *) echo -n $(uname -m) ;; esac)" >>${GITHUB_ENV}
 
-      - name: Log in to registry
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      # - name: Set OS environment variable
+      #   run: |
+      #     echo "OS=$(uname | awk '{print tolower($0)}')" >>${GITHUB_ENV}
 
-      - name: Build and Push awx-operator Image
-        run: |
-          IMAGE_TAG_BASE=ghcr.io/${OWNER_LC}/awx-operator \
-          VERSION=${GITHUB_REF##*/} \
-          make docker-build docker-push
+      # - name: Install operator-sdk
+      #   run: |
+      #     echo "Installing operator-sdk ${OPERATOR_SDK_DL_URL}" && \
+      #     curl -LO ${OPERATOR_SDK_DL_URL}/operator-sdk_${OS}_${ARCH} && \
+      #     chmod +x operator-sdk_${OS}_${ARCH} && \
+      #     sudo mkdir -p /usr/local/bin/ && \
+      #     sudo mv operator-sdk_${OS}_${ARCH} /usr/local/bin/operator-sdk && \
+      #     operator-sdk version
+      #   env:
+      #     OPERATOR_SDK_DL_URL: https://github.com/operator-framework/operator-sdk/releases/download/v1.26.0
 
-      - name: Build bundle manifests
-        run: |
-          make bundle VERSION=$(git describe --tags)
+      # - name: Log in to registry
+      #   run: |
+      #     echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Build and Push awx-operator Bundle
-        run: |
-          IMAGE_TAG_BASE=ghcr.io/${OWNER_LC}/awx-operator \
-          VERSION=${GITHUB_REF##*/} \
-          make bundle-build bundle-push
+      # - name: Build and Push awx-operator Image
+      #   run: |
+      #     IMAGE_TAG_BASE=ghcr.io/${OWNER_LC}/awx-operator \
+      #     make docker-build docker-push
+
+      # - name: Build bundle manifests
+      #   run: |
+      #     IMAGE_TAG_BASE=ghcr.io/${OWNER_LC}/awx-operator \
+      #     make bundle
+
+      # - name: Build and Push awx-operator Bundle
+      #   run: |
+      #     IMAGE_TAG_BASE=ghcr.io/${OWNER_LC}/awx-operator \
+      #     make bundle-build bundle-push
 
