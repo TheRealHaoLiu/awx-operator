@@ -50,9 +50,13 @@ jobs:
           VERSION=${GITHUB_REF##*/} \
           make docker-build docker-push
 
+      - name: Build bundle manifests
+        run: |
+          make bundle
+
       - name: Build and Push awx-operator Bundle
         run: |
           IMAGE_TAG_BASE=ghcr.io/${OWNER_LC}/awx-operator \
           VERSION=${GITHUB_REF##*/} \
-          make bundle bundle-build bundle-push
+          make bundle-build bundle-push
 
