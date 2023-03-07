@@ -25,6 +25,7 @@ jobs:
         run: |
           echo "Installing operator-sdk ${OPERATOR_SDK_DL_URL}" && \
           curl -LO ${OPERATOR_SDK_DL_URL}/operator-sdk_${OS}_${ARCH} && \
+          echo ls && \
           chmod +x operator-sdk_${OS}_${ARCH} && \
           sudo mkdir -p /usr/local/bin/ && \
           sudo mv operator-sdk_${OS}_${ARCH} /usr/local/bin/operator-sdk && \
