@@ -3,8 +3,6 @@
 name: Feature Branch Image Build and Push
 
 on:
-  workflow_dispatch:
-
   push:
     branches: [feature_*]
 
@@ -67,7 +65,7 @@ jobs:
       - name: Build and Push awx-operator Bundle
         run: |
           make bundle-build bundle-push && \
-          docker tag ${IMAGE_TAG_BASE}-bundle:${VERSION} ${IMAGE_TAG_BASE}:${GITHUB_REF##*/} && \
+          docker tag ${IMAGE_TAG_BASE}-bundle:${VERSION} ${IMAGE_TAG_BASE}-bundle:${GITHUB_REF##*/} && \
           docker push ${IMAGE_TAG_BASE}-bundle:${GITHUB_REF##*/}
 
       - name: Build and Push awx-operator Catalog
