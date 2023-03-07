@@ -24,6 +24,7 @@ jobs:
       - name: Install operator-sdk
         run: |
           OPERATOR_SDK_DL_URL=https://github.com/operator-framework/operator-sdk/releases/download/v1.27.0 \
+          echo "Installing operator-sdk ${OPERATOR_SDK_DL_URL}" && \
           curl -LO ${OPERATOR_SDK_DL_URL}/operator-sdk_${OS}_${ARCH} && \
           chmod +x operator-sdk_${OS}_${ARCH} && \
           sudo mkdir -p /usr/local/bin/ && \
