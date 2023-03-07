@@ -52,7 +52,7 @@ jobs:
 
       - name: Build bundle manifests
         run: |
-          make bundle
+          make bundle VERSION=$(git describe --tags)
 
       - name: Build and Push awx-operator Bundle
         run: |
