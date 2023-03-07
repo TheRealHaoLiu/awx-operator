@@ -58,7 +58,7 @@ jobs:
         run: |
           make docker-build docker-push && \
           docker tag ${IMAGE_TAG_BASE}:${VERSION} ${IMAGE_TAG_BASE}:${GITHUB_REF##*/} && \
-          docker push ${IMAGE_TAG_BASE:${GITHUB_REF##*/}
+          docker push ${IMAGE_TAG_BASE}:${GITHUB_REF##*/}
 
       - name: Build bundle manifests
         run: |
