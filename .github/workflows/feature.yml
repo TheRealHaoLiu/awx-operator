@@ -27,6 +27,10 @@ jobs:
         env:
           OWNER: '${{ github.repository_owner }}'
 
+      - name: Set IMAGE_TAG_BASE
+        run: |
+          echo "IMAGE_TAG_BASE=ghcr.io/${OWNER_LC}/awx-operator" >>${GITHUB_ENV}
+
       - name: Set ARCH environment variable
         run: |
           echo "ARCH=$(case $(uname -m) in x86_64) echo -n amd64 ;; aarch64) echo -n arm64 ;; *) echo -n $(uname -m) ;; esac)" >>${GITHUB_ENV}
@@ -52,19 +56,16 @@ jobs:
 
       - name: Build and Push awx-operator Image
         run: |
-          IMAGE_TAG_BASE=ghcr.io/${OWNER_LC}/awx-operator \
           make docker-build docker-push && \
           docker tag ${IMAGE_TAG_BASE}/awx-operator:${VERSION} ${IMAGE_TAG_BASE}/awx-operator:${GITHUB_REF##*/} && \
           docker push ${IMAGE_TAG_BASE}/awx-operator:${GITHUB_REF##*/}
 
       - name: Build bundle manifests
         run: |
-          IMAGE_TAG_BASE=ghcr.io/${OWNER_LC}/awx-operator \
           make bundle
 
       - name: Build and Push awx-operator Bundle
         run: |
-          IMAGE_TAG_BASE=ghcr.io/${OWNER_LC}/awx-operator \
           make bundle-build bundle-push && \
           docker tag ${IMAGE_TAG_BASE}/awx-operator-bundle:${VERSION} ${IMAGE_TAG_BASE}/awx-operator:${GITHUB_REF##*/} && \
           docker push ${IMAGE_TAG_BASE}/awx-operator-bundle:${GITHUB_REF##*/}
