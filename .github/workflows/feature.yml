@@ -27,7 +27,8 @@ jobs:
           curl -LO ${OPERATOR_SDK_DL_URL}/operator-sdk_${OS}_${ARCH} && \
           chmod +x operator-sdk_${OS}_${ARCH} && \
           sudo mkdir -p /usr/local/bin/ && \
-          sudo mv operator-sdk_${OS}_${ARCH} /usr/local/bin/operator-sdk
+          sudo mv operator-sdk_${OS}_${ARCH} /usr/local/bin/operator-sdk && \
+          operator-sdk version
         env:
           OPERATOR_SDK_DL_URL: https://github.com/operator-framework/operator-sdk/releases/download/v1.27.0
 
