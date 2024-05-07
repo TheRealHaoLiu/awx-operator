@@ -2,8 +2,8 @@
 - name: Check for specified broadcast websocket secret configuration
   k8s_info:
     kind: Secret
-    namespace: '{{ ansible_operator_meta.namespace }}'
-    name: '{{ broadcast_websocket_secret }}'
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    name: "{{ broadcast_websocket_secret }}"
   register: _custom_broadcast_websocket
   no_log: "{{ no_log }}"
   when: broadcast_websocket_secret | length
@@ -11,15 +11,16 @@
 - name: Check for default broadcast websocket secret configuration
   k8s_info:
     kind: Secret
-    namespace: '{{ ansible_operator_meta.namespace }}'
-    name: '{{ ansible_operator_meta.name }}-broadcast-websocket'
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    name: "{{ ansible_operator_meta.name }}-broadcast-websocket"
   register: _default_broadcast_websocket
   no_log: "{{ no_log }}"
 
 - name: Set broadcast websocket secret
   set_fact:
     # yamllint disable-line rule:line-length
-    _broadcast_websocket_secret: '{{ _custom_broadcast_websocket["resources"] | default([]) | length | ternary(_custom_broadcast_websocket, _default_broadcast_websocket) }}'  # noqa 204
+    _broadcast_websocket_secret: '{{ _custom_broadcast_websocket["resources"] | default([]) | length | ternary(_custom_broadcast_websocket, _default_broadcast_websocket)
+      }}' # noqa 204
   no_log: "{{ no_log }}"
 
 - block:
@@ -32,8 +33,8 @@
     - name: Read broadcast websocket secret
       k8s_info:
         kind: Secret
-        namespace: '{{ ansible_operator_meta.namespace }}'
-        name: '{{ ansible_operator_meta.name }}-broadcast-websocket'
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        name: "{{ ansible_operator_meta.name }}-broadcast-websocket"
       register: _generated_broadcast_websocket
       no_log: "{{ no_log }}"
 
@@ -42,7 +43,7 @@
 - name: Set broadcast websocket secret
   set_fact:
     # yamllint disable-line rule:line-length
-    __broadcast_websocket_secret: '{{ _generated_broadcast_websocket["resources"] | default([]) | length | ternary(_generated_broadcast_websocket, _broadcast_websocket_secret)  }}'  # noqa 204
+    __broadcast_websocket_secret: '{{ _generated_broadcast_websocket["resources"] | default([]) | length | ternary(_generated_broadcast_websocket, _broadcast_websocket_secret)  }}' # noqa 204
   no_log: "{{ no_log }}"
 
 - name: Store broadcast websocket secret name

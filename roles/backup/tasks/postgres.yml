@@ -1,16 +1,15 @@
 ---
-
 - name: Get PostgreSQL configuration
   k8s_info:
     kind: Secret
-    namespace: '{{ ansible_operator_meta.namespace }}'
+    namespace: "{{ ansible_operator_meta.namespace }}"
     name: "{{ this_awx['resources'][0]['status']['postgresConfigurationSecret'] }}"
   register: pg_config
   no_log: "{{ no_log }}"
 
 - name: Fail if postgres configuration secret status does not exist
   fail:
-    msg: "The postgresConfigurationSecret status is not set on the AWX object yet or the secret has been deleted."
+    msg: The postgresConfigurationSecret status is not set on the AWX object yet or the secret has been deleted.
   when: not pg_config | default([]) | length
 
 - name: Store Database Configuration
@@ -26,20 +25,20 @@
 - block:
     - name: Delete pod to reload a resource configuration
       set_fact:
-        postgres_label_selector: "app.kubernetes.io/instance=postgres-{{ supported_pg_version }}-{{ deployment_name }}"
+        postgres_label_selector: app.kubernetes.io/instance=postgres-{{ supported_pg_version }}-{{ deployment_name }}
       when: postgres_label_selector is not defined
 
     - name: Get the postgres pod information
       k8s_info:
         kind: Pod
-        namespace: '{{ ansible_operator_meta.namespace }}'
+        namespace: "{{ ansible_operator_meta.namespace }}"
         label_selectors:
           - "{{ postgres_label_selector }}"
       register: postgres_pod
       until:
-        - "postgres_pod['resources'] | length"
-        - "postgres_pod['resources'][0]['status']['phase'] == 'Running'"
-        - "postgres_pod['resources'][0]['status']['containerStatuses'][0]['ready'] == true"
+        - postgres_pod['resources'] | length
+        - postgres_pod['resources'][0]['status']['phase'] == 'Running'
+        - postgres_pod['resources'][0]['status']['containerStatuses'][0]['ready'] == true
       delay: 5
       retries: 60
 
@@ -54,7 +53,7 @@
 
 - name: Set backup directory name
   set_fact:
-    backup_dir: "/backups/tower-openshift-backup-{{ now }}"
+    backup_dir: /backups/tower-openshift-backup-{{ now }}
 
 - name: Create directory for backup
   k8s_exec:
@@ -72,18 +71,18 @@
 
 - name: Set full resolvable host name for postgres pod
   set_fact:
-    resolvable_db_host: '{{ (awx_postgres_type == "managed") | ternary(awx_postgres_host + "." + ansible_operator_meta.namespace + ".svc", awx_postgres_host) }}'  # yamllint disable-line rule:line-length
+    resolvable_db_host: '{{ (awx_postgres_type == "managed") | ternary(awx_postgres_host + "." + ansible_operator_meta.namespace + ".svc", awx_postgres_host) }}' # yamllint disable-line rule:line-length
   no_log: "{{ no_log }}"
 
 - name: Get the current resource task pod information.
   k8s_info:
     api_version: v1
     kind: Pod
-    namespace: '{{ ansible_operator_meta.namespace }}'
+    namespace: "{{ ansible_operator_meta.namespace }}"
     label_selectors:
-      - "app.kubernetes.io/name={{ deployment_name }}-task"
-      - "app.kubernetes.io/managed-by={{ deployment_type }}-operator"
-      - "app.kubernetes.io/component={{ deployment_type }}"
+      - app.kubernetes.io/name={{ deployment_name }}-task
+      - app.kubernetes.io/managed-by={{ deployment_type }}-operator
+      - app.kubernetes.io/component={{ deployment_type }}
     field_selectors:
       - status.phase=Running
   register: awx_task_pod

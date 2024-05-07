@@ -1,5 +1,4 @@
 ---
-
 - name: Set actual old postgres configuration secret name
   set_fact:
     old_postgres_configuration_name: "{{ old_pg_config['resources'][0]['metadata']['name'] }}"
@@ -15,7 +14,7 @@
 
 - name: Set Default label selector for custom resource generated postgres
   set_fact:
-    postgres_label_selector: "app.kubernetes.io/instance=postgres-{{ supported_pg_version }}-{{ ansible_operator_meta.name }}"
+    postgres_label_selector: app.kubernetes.io/instance=postgres-{{ supported_pg_version }}-{{ ansible_operator_meta.name }}
   when: postgres_label_selector is not defined
 
 - name: Get the postgres pod information

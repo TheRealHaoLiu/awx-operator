@@ -3,13 +3,13 @@
   k8s:
     state: present
     definition:
-      apiVersion: '{{ api_version }}'
-      kind: '{{ kind }}'
-      name: '{{ ansible_operator_meta.name }}'
-      namespace: '{{ ansible_operator_meta.namespace }}'
+      apiVersion: "{{ api_version }}"
+      kind: "{{ kind }}"
+      name: "{{ ansible_operator_meta.name }}"
+      namespace: "{{ ansible_operator_meta.namespace }}"
       metadata:
-        name: '{{ ansible_operator_meta.name }}'
-        namespace: '{{ ansible_operator_meta.namespace }}'
+        name: "{{ ansible_operator_meta.name }}"
+        namespace: "{{ ansible_operator_meta.namespace }}"
         labels: '{{ lookup("template", "../common/templates/labels/common.yaml.j2") | from_yaml }}'
   when: set_self_labels | bool
 
@@ -28,28 +28,28 @@
          | dict2items | selectattr('key', 'in', additional_labels)
       }}
   when:
-  - additional_labels | length
-  - this_restore['resources'][0]['metadata']['labels']
+    - additional_labels | length
+    - this_restore['resources'][0]['metadata']['labels']
 
 - block:
-  - include_tasks: init.yml
+    - include_tasks: init.yml
 
-  - include_tasks: import_vars.yml
+    - include_tasks: import_vars.yml
 
-  - include_tasks: secrets.yml
+    - include_tasks: secrets.yml
 
-  - include_tasks: deploy_awx.yml
+    - include_tasks: deploy_awx.yml
 
-  - include_tasks: postgres.yml
+    - include_tasks: postgres.yml
 
-  - name: Set flag signifying this restore was successful
-    set_fact:
-      tower_restore_complete: True
+    - name: Set flag signifying this restore was successful
+      set_fact:
+        tower_restore_complete: true
 
-  - include_tasks: cleanup.yml
+    - include_tasks: cleanup.yml
 
   when:
-  - this_restore['resources'][0]['status']['restoreComplete'] is not defined
+    - this_restore['resources'][0]['status']['restoreComplete'] is not defined
 
 - name: Update status variables
   include_tasks: update_status.yml

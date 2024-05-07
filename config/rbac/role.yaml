@@ -2,7 +2,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  creationTimestamp: null
+  creationTimestamp:
   name: awx-manager-role
 rules:
   - apiGroups:
@@ -39,7 +39,7 @@ rules:
       - update
       - watch
   - apiGroups:
-      - "rbac.authorization.k8s.io"
+      - rbac.authorization.k8s.io
     resources:
       - roles
       - rolebindings
@@ -117,7 +117,7 @@ rules:
     resources:
       - pods/exec
       - pods/attach
-      - pods/log  # log & attach rules needed to be able to grant them to AWX service account
+      - pods/log # log & attach rules needed to be able to grant them to AWX service account
     verbs:
       - create
       - get
@@ -131,11 +131,11 @@ rules:
   - apiGroups:
       - awx.ansible.com
     resources:
-      - '*'
+      - "*"
       - awxbackups
       - awxrestores
     verbs:
-      - '*'
+      - "*"
   - apiGroups:
       - traefik.containo.us
       - traefik.io
