@@ -2,7 +2,7 @@
 - name: Verify
   hosts: localhost
   connection: local
-  gather_facts: no
+  gather_facts: false
   collections:
     - kubernetes.core
 
@@ -12,7 +12,7 @@
   tasks:
     - block:
         - name: Import all test files from tasks/
-          include_tasks: '{{ item }}'
+          include_tasks: "{{ item }}"
           with_fileglob:
             - tasks/awx_test.yml
             - tasks/awx_replicas_test.yml
@@ -21,9 +21,9 @@
       rescue:
         - name: Retrieve relevant resources
           k8s_info:
-            api_version: '{{ item.api_version }}'
-            kind: '{{ item.kind }}'
-            namespace: '{{ namespace }}'
+            api_version: "{{ item.api_version }}"
+            kind: "{{ item.kind }}"
+            namespace: "{{ namespace }}"
           loop:
             - api_version: v1
               kind: Pod
@@ -39,8 +39,8 @@
 
         - name: Retrieve Pod logs
           k8s_log:
-            name: '{{ item.metadata.name }}'
-            namespace: '{{ namespace }}'
+            name: "{{ item.metadata.name }}"
+            namespace: "{{ namespace }}"
             container: awx-manager
           loop: "{{ q('k8s', api_version='v1', kind='Pod', namespace=namespace, label_selector=ctrl_label) }}"
           register: debug_logs
@@ -56,15 +56,15 @@
         - name: Output gathered logs
           debug:
             var: item.log_lines
-          loop: '{{ debug_logs.results }}'
+          loop: "{{ debug_logs.results }}"
           tags:
             - always
 
         - name: Re-emit failure
           vars:
             failed_task:
-              result: '{{ ansible_failed_result }}'
+              result: "{{ ansible_failed_result }}"
           fail:
-            msg: '{{ failed_task }}'
+            msg: "{{ failed_task }}"
           tags:
             - always

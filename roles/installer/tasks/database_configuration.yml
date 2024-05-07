@@ -2,8 +2,8 @@
 - name: Check for specified PostgreSQL configuration
   k8s_info:
     kind: Secret
-    namespace: '{{ ansible_operator_meta.namespace }}'
-    name: '{{ postgres_configuration_secret }}'
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    name: "{{ postgres_configuration_secret }}"
   register: _custom_pg_config_resources
   when: postgres_configuration_secret | length
   no_log: "{{ no_log }}"
@@ -11,16 +11,16 @@
 - name: Check for default PostgreSQL configuration
   k8s_info:
     kind: Secret
-    namespace: '{{ ansible_operator_meta.namespace }}'
-    name: '{{ ansible_operator_meta.name }}-postgres-configuration'
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    name: "{{ ansible_operator_meta.name }}-postgres-configuration"
   register: _default_pg_config_resources
   no_log: "{{ no_log }}"
 
 - name: Check for specified old PostgreSQL configuration secret
   k8s_info:
     kind: Secret
-    namespace: '{{ ansible_operator_meta.namespace }}'
-    name: '{{ old_postgres_configuration_secret }}'
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    name: "{{ old_postgres_configuration_secret }}"
   register: _custom_old_pg_config_resources
   when: old_postgres_configuration_secret | length
   no_log: "{{ no_log }}"
@@ -28,15 +28,16 @@
 - name: Check for default old PostgreSQL configuration
   k8s_info:
     kind: Secret
-    namespace: '{{ ansible_operator_meta.namespace }}'
-    name: '{{ ansible_operator_meta.name }}-old-postgres-configuration'
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    name: "{{ ansible_operator_meta.name }}-old-postgres-configuration"
   register: _default_old_pg_config_resources
   no_log: "{{ no_log }}"
 
 - name: Set old PostgreSQL configuration
   set_fact:
     # yamllint disable-line rule:line-length
-    old_pg_config: '{{ _custom_old_pg_config_resources["resources"] | default([]) | length | ternary(_custom_old_pg_config_resources, _default_old_pg_config_resources) }}'  # noqa 204
+    old_pg_config: '{{ _custom_old_pg_config_resources["resources"] | default([]) | length | ternary(_custom_old_pg_config_resources, _default_old_pg_config_resources)
+      }}' # noqa 204
 
 - name: Set proper database name when migrating from old deployment
   set_fact:
@@ -77,8 +78,8 @@
     - name: Read Database Configuration
       k8s_info:
         kind: Secret
-        namespace: '{{ ansible_operator_meta.namespace }}'
-        name: '{{ ansible_operator_meta.name }}-postgres-configuration'
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        name: "{{ ansible_operator_meta.name }}-postgres-configuration"
       register: _generated_pg_config_resources
       no_log: "{{ no_log }}"
   when: not _pg_config['resources'] | default([]) | length
@@ -119,19 +120,14 @@
 - block:
     - name: Filter pods by name
       set_fact:
-        filtered_old_postgres_pods: "{{ _running_pods.resources |
-          selectattr('metadata.name', 'match', ansible_operator_meta.name + '-postgres.*-0') |
-          rejectattr('metadata.name', 'search', '-' + supported_pg_version | string + '-0') |
-          list }}"
+        filtered_old_postgres_pods: "{{ _running_pods.resources | selectattr('metadata.name', 'match', ansible_operator_meta.name + '-postgres.*-0') | rejectattr('metadata.name',
+          'search', '-' + supported_pg_version | string + '-0') | list }}"
 
-  # Sort pods by name in reverse order (most recent PG version first) and set
+    # Sort pods by name in reverse order (most recent PG version first) and set
     - name: Set info for previous postgres pod
       set_fact:
-        sorted_old_postgres_pods: "{{ filtered_old_postgres_pods |
-          sort(attribute='metadata.name') |
-          reverse | list }}"
+        sorted_old_postgres_pods: "{{ filtered_old_postgres_pods | sort(attribute='metadata.name') | reverse | list }}"
       when: filtered_old_postgres_pods | length
-
 
     - name: Set info for previous postgres pod
       set_fact:
@@ -180,7 +176,7 @@
   when:
     - managed_database
     - (_previous_upgraded_pg_version | default(false)) | ternary(_previous_upgraded_pg_version | int < supported_pg_version, true)
-    - old_postgres_pod | length  # If empty, then old pg pod has been removed and we can assume the upgrade is complete
+    - old_postgres_pod | length # If empty, then old pg pod has been removed and we can assume the upgrade is complete
 
 - block:
     - name: Create Database if no database is specified
@@ -204,7 +200,7 @@
         name: "{{ ansible_operator_meta.name }}-postgres-{{ supported_pg_version }}"
         namespace: "{{ ansible_operator_meta.namespace }}"
         replicas: 0
-        wait: yes
+        wait: true
 
     - name: Remove PostgreSQL statefulset for upgrade
       k8s:
@@ -213,7 +209,7 @@
         kind: StatefulSet
         name: "{{ ansible_operator_meta.name }}-postgres-{{ supported_pg_version }}"
         namespace: "{{ ansible_operator_meta.namespace }}"
-        wait: yes
+        wait: true
       when: create_statefulset_result.error == 422
 
     - name: Recreate PostgreSQL statefulset with updated values
@@ -224,7 +220,7 @@
 
 - name: Set Default label selector for custom resource generated postgres
   set_fact:
-    postgres_label_selector: "app.kubernetes.io/instance=postgres-{{ supported_pg_version }}-{{ ansible_operator_meta.name }}"
+    postgres_label_selector: app.kubernetes.io/instance=postgres-{{ supported_pg_version }}-{{ ansible_operator_meta.name }}
   when: postgres_label_selector is not defined
 
 - name: Get the postgres pod information
@@ -240,16 +236,16 @@
 - name: Wait for Database to initialize if managed DB
   k8s_info:
     kind: Pod
-    namespace: '{{ ansible_operator_meta.namespace }}'
+    namespace: "{{ ansible_operator_meta.namespace }}"
     label_selectors:
       - "{{ postgres_label_selector }}"
     field_selectors:
       - status.phase=Running
   register: postgres_pod
   until:
-    - "postgres_pod['resources'] | length"
-    - "postgres_pod['resources'][0]['status']['phase'] == 'Running'"
-    - "postgres_pod['resources'][0]['status']['containerStatuses'][0]['ready'] == true"
+    - postgres_pod['resources'] | length
+    - postgres_pod['resources'][0]['status']['phase'] == 'Running'
+    - postgres_pod['resources'][0]['status']['containerStatuses'][0]['ready'] == true
   delay: 5
   retries: 60
   when: managed_database

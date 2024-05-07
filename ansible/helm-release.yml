@@ -7,9 +7,9 @@
   tasks:
     - name: Look up release
       uri:
-        url: "https://api.github.com/repos/{{ chart_owner }}/{{ chart_repo }}/releases/tags/{{ tag }}"
+        url: https://api.github.com/repos/{{ chart_owner }}/{{ chart_repo }}/releases/tags/{{ tag }}
       register: release
-      ignore_errors: yes
+      ignore_errors: true
 
     - fail:
         msg: |
@@ -18,13 +18,13 @@
 
     - name: Set helm filename and commit message
       set_fact:
-        asset_already_attached: False
-        helm_file_name: "awx-operator-{{ tag }}.tgz"
-        commit_message: "Updated index.yaml for release {{ release.json.tag_name }}"
+        asset_already_attached: false
+        helm_file_name: awx-operator-{{ tag }}.tgz
+        commit_message: Updated index.yaml for release {{ release.json.tag_name }}
 
     - name: See if file is already attached
       set_fact:
-        asset_already_attached: True
+        asset_already_attached: true
       loop: "{{ release.json.get('assets', []) }}"
       loop_control:
         label: "{{ item.name }}"
@@ -44,11 +44,11 @@
         # Move to chart releaser after https://github.com/helm/chart-releaser/issues/122 exists
         - name: Upload helm chart
           uri:
-            url: "https://uploads.github.com/repos/{{ chart_owner }}/{{ chart_repo }}/releases/{{ release.json.id }}/assets?name={{ helm_file_name }}"
+            url: https://uploads.github.com/repos/{{ chart_owner }}/{{ chart_repo }}/releases/{{ release.json.id }}/assets?name={{ helm_file_name }}
             src: "{{ playbook_dir }}/../.cr-release-packages/{{ tag }}/awx-operator-{{ tag }}.tgz"
             headers:
-              Authorization: "token {{ gh_token }}"
-              Content-Type: "application/octet-stream"
+              Authorization: token {{ gh_token }}
+              Content-Type: application/octet-stream
             status_code:
               - 200
               - 201
@@ -62,7 +62,7 @@
 
     - name: Check if we have published the release
       command:
-        cmd: "git log --grep='{{ commit_message }}'"
+        cmd: git log --grep='{{ commit_message }}'
         chdir: "{{ playbook_dir }}/../gh-pages"
       register: commits_for_release
 
@@ -77,11 +77,11 @@
           git:
             repo: "{{ ((repo_type | default('http')) == 'ssh') | ternary(ssh_repo, http_repo) }}"
             dest: "{{ temp_dir.path }}"
-            single_branch: yes
+            single_branch: true
             version: gh-pages
           vars:
-            http_repo: "https://github.com/{{ chart_owner }}/{{ chart_repo }}"
-            ssh_repo: "git@github.com:{{ chart_owner }}/{{ chart_repo }}.git"
+            http_repo: https://github.com/{{ chart_owner }}/{{ chart_repo }}
+            ssh_repo: git@github.com:{{ chart_owner }}/{{ chart_repo }}.git
 
         - name: Publish helm index
           ansible.builtin.command:
@@ -95,7 +95,7 @@
 
         - name: Set url base swap in gitconfig
           command:
-            cmd: "git config --local url.https://{{ gh_user }}:{{ gh_token }}@github.com/.insteadOf https://github.com/"
+            cmd: git config --local url.https://{{ gh_user }}:{{ gh_token }}@github.com/.insteadOf https://github.com/
           args:
             chdir: "{{ temp_dir.path }}/"
           no_log: true

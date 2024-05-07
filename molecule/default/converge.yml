@@ -2,7 +2,7 @@
 - name: Converge
   hosts: localhost
   connection: local
-  gather_facts: no
+  gather_facts: false
   collections:
     - kubernetes.core
 
@@ -11,7 +11,7 @@
       k8s:
         api_version: v1
         kind: Namespace
-        name: '{{ namespace }}'
+        name: "{{ namespace }}"
       tags:
         - always
 

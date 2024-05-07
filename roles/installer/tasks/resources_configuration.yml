@@ -3,11 +3,11 @@
   k8s_info:
     api_version: v1
     kind: Pod
-    namespace: '{{ ansible_operator_meta.namespace }}'
+    namespace: "{{ ansible_operator_meta.namespace }}"
     label_selectors:
-      - "app.kubernetes.io/name={{ ansible_operator_meta.name }}-web"
-      - "app.kubernetes.io/managed-by={{ deployment_type }}-operator"
-      - "app.kubernetes.io/component={{ deployment_type }}"
+      - app.kubernetes.io/name={{ ansible_operator_meta.name }}-web
+      - app.kubernetes.io/managed-by={{ deployment_type }}-operator
+      - app.kubernetes.io/component={{ deployment_type }}
     field_selectors:
       - status.phase=Running
   register: awx_web_pod
@@ -32,13 +32,14 @@
 
 - name: Set Control Plane EE image URL
   set_fact:
-    _control_plane_ee_image: "{{ _custom_control_plane_ee_image | default(lookup('env', 'RELATED_IMAGE_CONTROL_PLANE_EE')) | default(_control_plane_ee_image, true) }}"
+    _control_plane_ee_image: "{{ _custom_control_plane_ee_image | default(lookup('env', 'RELATED_IMAGE_CONTROL_PLANE_EE')) | default(_control_plane_ee_image, true)
+      }}"
 
 - name: Check for Receptor CA Secret
   k8s_info:
     kind: Secret
-    namespace: '{{ ansible_operator_meta.namespace }}'
-    name: '{{ ansible_operator_meta.name }}-receptor-ca'
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    name: "{{ ansible_operator_meta.name }}-receptor-ca"
   register: receptor_ca
   no_log: "{{ no_log }}"
 
@@ -51,8 +52,8 @@
       k8s:
         state: absent
         kind: Secret
-        namespace: '{{ ansible_operator_meta.namespace }}'
-        name: '{{ ansible_operator_meta.name }}-receptor-ca'
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        name: "{{ ansible_operator_meta.name }}-receptor-ca"
     - name: Create tempfile for receptor-ca.key
       tempfile:
         state: file
@@ -81,13 +82,13 @@
     - name: Read New Receptor CA Secret
       k8s_info:
         kind: Secret
-        namespace: '{{ ansible_operator_meta.namespace }}'
-        name: '{{ ansible_operator_meta.name }}-receptor-ca'
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        name: "{{ ansible_operator_meta.name }}-receptor-ca"
       register: _receptor_ca
       no_log: "{{ no_log }}"
     - name: Set receptor_ca variable
       set_fact:
-        receptor_ca: '{{ _receptor_ca }}'
+        receptor_ca: "{{ _receptor_ca }}"
       no_log: "{{ no_log }}"
     - name: Remove tempfiles
       file:
@@ -127,13 +128,13 @@
     - name: Read Receptor CA secret
       k8s_info:
         kind: Secret
-        namespace: '{{ ansible_operator_meta.namespace }}'
-        name: '{{ ansible_operator_meta.name }}-receptor-ca'
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        name: "{{ ansible_operator_meta.name }}-receptor-ca"
       register: _receptor_ca
       no_log: "{{ no_log }}"
     - name: Set receptor_ca variable
       set_fact:
-        receptor_ca: '{{ _receptor_ca }}'
+        receptor_ca: "{{ _receptor_ca }}"
       no_log: "{{ no_log }}"
     - name: Remove tempfiles
       file:
@@ -147,8 +148,8 @@
 - name: Check for Receptor work signing Secret
   k8s_info:
     kind: Secret
-    namespace: '{{ ansible_operator_meta.namespace }}'
-    name: '{{ ansible_operator_meta.name }}-receptor-work-signing'
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    name: "{{ ansible_operator_meta.name }}-receptor-work-signing"
   register: receptor_work_signing
   no_log: "{{ no_log }}"
 
@@ -183,13 +184,13 @@
     - name: Read Receptor work signing Secret
       k8s_info:
         kind: Secret
-        namespace: '{{ ansible_operator_meta.namespace }}'
-        name: '{{ ansible_operator_meta.name }}-receptor-work-signing'
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        name: "{{ ansible_operator_meta.name }}-receptor-work-signing"
       register: _receptor_work_signing
       no_log: "{{ no_log }}"
     - name: Set receptor_work_signing variable
       set_fact:
-        receptor_work_signing: '{{ _receptor_work_signing }}'
+        receptor_work_signing: "{{ _receptor_work_signing }}"
       no_log: "{{ no_log }}"
     - name: Remove tempfiles
       file:
@@ -202,17 +203,17 @@
 
 - name: Apply Resources
   k8s:
-    apply: yes
+    apply: true
     definition: "{{ lookup('template', item + '.yaml.j2') }}"
-    wait: yes
+    wait: true
   loop:
-    - 'configmaps/config'
-    - 'configmaps/pre_stop_scripts'
-    - 'secrets/app_credentials'
-    - 'rbac/service_account'
-    - 'storage/persistent'
-    - 'networking/service'
-    - 'networking/ingress'
+    - configmaps/config
+    - configmaps/pre_stop_scripts
+    - secrets/app_credentials
+    - rbac/service_account
+    - storage/persistent
+    - networking/service
+    - networking/ingress
   no_log: "{{ no_log }}"
 
 - name: Set default awx app image
@@ -247,7 +248,7 @@
 
 - name: Apply deployment resources
   k8s:
-    apply: yes
+    apply: true
     definition: "{{ lookup('template', 'deployments/{{ item }}.yaml.j2') }}"
   loop:
     - web
@@ -258,17 +259,17 @@
     - name: Get the new resource pod information after updating resource.
       k8s_info:
         kind: Pod
-        namespace: '{{ ansible_operator_meta.namespace }}'
+        namespace: "{{ ansible_operator_meta.namespace }}"
         label_selectors:
-          - "app.kubernetes.io/name={{ ansible_operator_meta.name }}-web"
-          - "app.kubernetes.io/managed-by={{ deployment_type }}-operator"
-          - "app.kubernetes.io/component={{ deployment_type }}"
+          - app.kubernetes.io/name={{ ansible_operator_meta.name }}-web
+          - app.kubernetes.io/managed-by={{ deployment_type }}-operator
+          - app.kubernetes.io/component={{ deployment_type }}
         field_selectors:
           - status.phase=Running
       register: _new_pod
       until:
-        - "_new_pod['resources'] | length"
-        - "_new_pod['resources'] | rejectattr('metadata.deletionTimestamp', 'defined') | length"
+        - _new_pod['resources'] | length
+        - _new_pod['resources'] | rejectattr('metadata.deletionTimestamp', 'defined') | length
       retries: 60
       delay: 5
 
@@ -290,5 +291,5 @@
   assert:
     that:
       - awx_web_pod_name != ''
-    fail_msg: "Could not find the tower pod's name."
+    fail_msg: Could not find the tower pod's name.
   when: web_replicas | int > 0 or (web_replicas == '' and replicas > 0)

@@ -1,11 +1,10 @@
 ---
-
 - name: Get AWX custom resource object
   k8s_info:
     version: v1beta1
     kind: AWX
-    namespace: '{{ ansible_operator_meta.namespace }}'
-    name: '{{ deployment_name }}'
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    name: "{{ deployment_name }}"
   register: _awx_cro
 
 - name: Set AWX object
@@ -16,10 +15,10 @@
   set_fact:
     _awx: "{{ _awx | combine ({ item.key : item.value }) }}"
   with_items:
-    - {"key": "secret_key_secret", "value": "{{ this_awx['resources'][0]['status']['secretKeySecret'] }}"}
-    - {"key": "admin_password_secret", "value": "{{ this_awx['resources'][0]['status']['adminPasswordSecret'] }}"}
-    - {"key": "broadcast_websocket_secret", "value": "{{ this_awx['resources'][0]['status']['broadcastWebsocketSecret'] }}"}
-    - {"key": "postgres_configuration_secret", "value": "{{ this_awx['resources'][0]['status']['postgresConfigurationSecret'] }}"}
+    - { key: secret_key_secret, value: "{{ this_awx['resources'][0]['status']['secretKeySecret'] }}" }
+    - { key: admin_password_secret, value: "{{ this_awx['resources'][0]['status']['adminPasswordSecret'] }}" }
+    - { key: broadcast_websocket_secret, value: "{{ this_awx['resources'][0]['status']['broadcastWebsocketSecret'] }}" }
+    - { key: postgres_configuration_secret, value: "{{ this_awx['resources'][0]['status']['postgresConfigurationSecret'] }}" }
 
 - name: Set AWX object
   set_fact:

@@ -10,8 +10,8 @@
       k8s:
         state: "{{ state | default('present') }}"
         namespace: "{{ namespace | default('default') }}"
-        apply: yes
-        wait: yes
+        apply: true
+        wait: true
         definition:
           apiVersion: awx.ansible.com/v1beta1
           kind: AWX
@@ -20,8 +20,8 @@
           spec:
             admin_user: admin
             admin_email: admin@localhost
-            service_type: "{{ service_type | default(omit) }}"  # Either clusterIP, Loadbalancer or NodePort
-            ingress_type: "{{ ingress_type | default(omit) }}"  # Either none, Ingress, Route
+            service_type: "{{ service_type | default(omit) }}" # Either clusterIP, Loadbalancer or NodePort
+            ingress_type: "{{ ingress_type | default(omit) }}" # Either none, Ingress, Route
             image: "{{ image | default(omit) }}"
             image_version: "{{ image_version | default(omit) }}"
             development_mode: "{{ development_mode | default(omit) | bool }}"

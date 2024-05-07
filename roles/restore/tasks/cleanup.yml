@@ -1,5 +1,4 @@
 ---
-
 - name: Delete any existing management pod
   k8s:
     name: "{{ ansible_operator_meta.name }}-db-management"
@@ -14,14 +13,14 @@
       apiVersion: v1
       kind: Secret
       metadata:
-        name: '{{ item }}'
-        namespace: '{{ ansible_operator_meta.namespace }}'
-        ownerReferences: null
+        name: "{{ item }}"
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        ownerReferences:
   loop:
-    - '{{ secret_key_secret }}'
-    - '{{ admin_password_secret }}'
-    - '{{ broadcast_websocket_secret }}'
-    - '{{ postgres_configuration_secret }}'
+    - "{{ secret_key_secret }}"
+    - "{{ admin_password_secret }}"
+    - "{{ broadcast_websocket_secret }}"
+    - "{{ postgres_configuration_secret }}"
   no_log: "{{ no_log }}"
 
 - name: Cleanup temp spec file
