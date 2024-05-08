@@ -1,7 +1,7 @@
 ---
 - name: Get web pod details
   k8s_info:
-    namespace: '{{ namespace }}'
+    namespace: "{{ namespace }}"
     kind: Pod
     label_selectors:
       - app.kubernetes.io/name = example-awx-web
@@ -14,7 +14,7 @@
 
 - name: Get task pod details
   k8s_info:
-    namespace: '{{ namespace }}'
+    namespace: "{{ namespace }}"
     kind: Pod
     label_selectors:
       - app.kubernetes.io/name = example-awx-task

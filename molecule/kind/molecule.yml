@@ -26,13 +26,13 @@ provisioner:
         awx_ee_image: ${AWX_EE_TEST_IMAGE:-""}
         awx_image: ${AWX_TEST_IMAGE:-""}
         awx_version: ${AWX_TEST_VERSION:-""}
-        ansible_python_interpreter: '{{ ansible_playbook_python }}'
+        ansible_python_interpreter: "{{ ansible_playbook_python }}"
         default_awx_version: "{{ lookup('url', 'https://api.github.com/repos/ansible/awx/releases/latest') | from_json | json_query('tag_name') }}"
         config_dir: ${MOLECULE_PROJECT_DIRECTORY}/config
         samples_dir: ${MOLECULE_PROJECT_DIRECTORY}/config/samples
         project_dir: ${MOLECULE_PROJECT_DIRECTORY}
         operator_image: testing-operator
-        operator_pull_policy: "Never"
+        operator_pull_policy: Never
         kubeconfig: "{{ lookup('env', 'KUBECONFIG') }}"
         kustomize: ${KUSTOMIZE_PATH:-kustomize}
         store_debug_output: ${STORE_DEBUG_OUTPUT:-false}

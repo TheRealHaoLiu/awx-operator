@@ -6,7 +6,7 @@
   collections:
     - kubernetes.core
   vars:
-    nginx_ingress_definition: 'https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml'
+    nginx_ingress_definition: https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
   tasks:
     - name: Install NGINX ingress
       k8s:
@@ -21,11 +21,11 @@
         namespace: ingress-nginx
         label_selectors:
           - app.kubernetes.io/component=controller
-        wait: yes
+        wait: true
         wait_timeout: 30
         wait_condition:
           type: Ready
-      register: result  # For some reason, this task always fails on the first try...
+      register: result # For some reason, this task always fails on the first try...
       until: result is not failed
       tags:
         - always

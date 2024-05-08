@@ -1,5 +1,4 @@
 ---
-
 - name: Set Postgres Configuration Secret name
   set_fact:
     postgres_configuration_secret: "{{ spec['postgres_configuration_secret'] | default(postgres_configuration_secret) }}"
@@ -7,8 +6,8 @@
 - name: Check for specified PostgreSQL configuration
   k8s_info:
     kind: Secret
-    namespace: '{{ ansible_operator_meta.namespace }}'
-    name: '{{ postgres_configuration_secret }}'
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    name: "{{ postgres_configuration_secret }}"
   register: pg_config
   no_log: "{{ no_log }}"
 
@@ -24,21 +23,21 @@
 
 - name: Set Default label selector for custom resource generated postgres
   set_fact:
-    postgres_label_selector: "app.kubernetes.io/instance=postgres-{{ supported_pg_version }}-{{ deployment_name }}"
+    postgres_label_selector: app.kubernetes.io/instance=postgres-{{ supported_pg_version }}-{{ deployment_name }}
   when: postgres_label_selector is not defined
 
 - block:
     - name: Get the postgres pod information
       k8s_info:
         kind: Pod
-        namespace: '{{ ansible_operator_meta.namespace }}'
+        namespace: "{{ ansible_operator_meta.namespace }}"
         label_selectors:
           - "{{ postgres_label_selector }}"
       register: postgres_pod
       until:
-        - "postgres_pod['resources'] | length"
-        - "postgres_pod['resources'][0]['status']['phase'] == 'Running'"
-        - "postgres_pod['resources'][0]['status']['containerStatuses'][0]['ready'] == true"
+        - postgres_pod['resources'] | length
+        - postgres_pod['resources'][0]['status']['phase'] == 'Running'
+        - postgres_pod['resources'][0]['status']['containerStatuses'][0]['ready'] == true
       delay: 5
       retries: 60
     - name: Set the resource pod name as a variable.
@@ -61,7 +60,7 @@
     name: "{{ item }}"
     namespace: "{{ ansible_operator_meta.namespace }}"
     replicas: 0
-    wait: yes
+    wait: true
   loop:
     - "{{ deployment_name }}-task"
     - "{{ deployment_name }}-web"
@@ -69,7 +68,8 @@
 
 - name: Set full resolvable host name for postgres pod
   set_fact:
-    resolvable_db_host: '{{ (awx_postgres_type == "managed") | ternary(awx_postgres_host + "." + ansible_operator_meta.namespace + ".svc." + cluster_name, awx_postgres_host) }}'  # yamllint disable-line rule:line-length
+    resolvable_db_host: '{{ (awx_postgres_type == "managed") | ternary(awx_postgres_host + "." + ansible_operator_meta.namespace + ".svc." + cluster_name, awx_postgres_host)
+      }}' # yamllint disable-line rule:line-length
   no_log: "{{ no_log }}"
 
 - name: Set pg_restore command

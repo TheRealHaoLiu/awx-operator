@@ -1,5 +1,4 @@
 ---
-
 - name: Determine the timestamp
   set_fact:
     now: '{{ lookup("pipe", "date +%FT%TZ") }}'

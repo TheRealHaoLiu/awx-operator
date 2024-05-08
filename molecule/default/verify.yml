@@ -2,7 +2,7 @@
 - name: Verify
   hosts: localhost
   connection: local
-  gather_facts: no
+  gather_facts: false
   collections:
     - kubernetes.core
 
@@ -13,7 +13,7 @@
     - name: Perform awx tests
       block:
         - name: Import all test files from tasks/
-          ansible.builtin.include_tasks: '{{ item }}'
+          ansible.builtin.include_tasks: "{{ item }}"
           with_fileglob:
             - tasks/awx_test.yml
             - tasks/awx_replicas_test.yml
@@ -22,7 +22,7 @@
       rescue:
         - name: Create debug output directory
           ansible.builtin.file:
-            path: '{{ debug_output_dir }}'
+            path: "{{ debug_output_dir }}"
             state: directory
           tags:
             - always
@@ -36,23 +36,23 @@
           kubernetes.core.k8s_info:
             api_version: v1
             kind: Pod
-            namespace: '{{ namespace }}'
+            namespace: "{{ namespace }}"
           register: all_pods
           tags:
             - always
 
         - name: Get all container logs for all pods
           ansible.builtin.include_tasks: utils/output_all_container_logs_for_pod.yml
-          loop: '{{ all_pods.resources }}'
-          ignore_errors: yes
+          loop: "{{ all_pods.resources }}"
+          ignore_errors: true
           tags:
             - always
 
         - name: Re-emit failure
           vars:
             failed_task:
-              result: '{{ ansible_failed_result }}'
+              result: "{{ ansible_failed_result }}"
           ansible.builtin.fail:
-            msg: '{{ failed_task }}'
+            msg: "{{ failed_task }}"
           tags:
             - always

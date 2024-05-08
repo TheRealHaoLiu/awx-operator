@@ -8,7 +8,7 @@ strict: true
 use_directory_urls: false
 
 theme:
-  name: "ansible"
+  name: ansible
   features:
     - content.code.copy
     - content.action.edit
@@ -89,8 +89,7 @@ nav:
   - Troubleshooting:
       - troubleshooting/debugging.md
 
-exclude_docs:
-  README.md
+exclude_docs: README.md
 
 plugins:
   - autorefs

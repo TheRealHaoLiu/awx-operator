@@ -1,3 +1,4 @@
+---
 # Adds namespace to all resources.
 namespace: awx
 
@@ -15,9 +16,9 @@ namePrefix: awx-operator-
 #    someName: someValue
 
 resources:
-- ../crd
-- ../rbac
-- ../manager
+  - ../crd
+  - ../rbac
+  - ../manager
 # [PROMETHEUS] To enable prometheus monitor, uncomment all sections with 'PROMETHEUS'.
 #- ../prometheus
 
@@ -27,4 +28,4 @@ resources:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 patches:
-- path: manager_auth_proxy_patch.yaml
+  - path: manager_auth_proxy_patch.yaml

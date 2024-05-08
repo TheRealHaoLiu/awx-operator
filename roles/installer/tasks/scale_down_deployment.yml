@@ -5,9 +5,9 @@
     kind: Deployment
     namespace: "{{ ansible_operator_meta.namespace }}"
     label_selectors:
-      - 'app.kubernetes.io/part-of={{ ansible_operator_meta.name }}'
-      - 'app.kubernetes.io/managed-by={{ deployment_type }}-operator'
-      - 'app.kubernetes.io/component={{ deployment_type }}'
+      - app.kubernetes.io/part-of={{ ansible_operator_meta.name }}
+      - app.kubernetes.io/managed-by={{ deployment_type }}-operator
+      - app.kubernetes.io/component={{ deployment_type }}
   register: _deployments
 
 - name: Scale down Deployment for migration
@@ -17,6 +17,6 @@
     name: "{{ item }}"
     namespace: "{{ ansible_operator_meta.namespace }}"
     replicas: 0
-    wait: yes
+    wait: true
   loop: "{{ _deployments.resources | map(attribute='metadata.name') | list }}"
   when: _deployments.resources | length
