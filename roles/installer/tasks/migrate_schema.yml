@@ -1,5 +1,4 @@
 ---
-
 - name: Check for pending migrations
   k8s_exec:
     namespace: "{{ ansible_operator_meta.namespace }}"
@@ -32,7 +31,7 @@
     # error if there is an issue with creating the job.
     - name: Create kubernetes job to perform the migration
       k8s:
-        apply: yes
+        apply: true
         definition: "{{ lookup('template', 'jobs/migration.yaml.j2') }}"
       register: migrate_result
 

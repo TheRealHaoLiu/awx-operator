@@ -1,5 +1,4 @@
 ---
-
 - name: Set variables from awxbackup object statuses if provided
   block:
     - name: Look up details for the backup
@@ -14,7 +13,7 @@
       block:
         - name: Set error message
           set_fact:
-            error_msg: "Cannot read the backup status variables for {{ backup_kind }} {{ backup_name  }}."
+            error_msg: Cannot read the backup status variables for {{ backup_kind }} {{ backup_name  }}.
 
         - name: Handle error
           import_tasks: error_handling.yml

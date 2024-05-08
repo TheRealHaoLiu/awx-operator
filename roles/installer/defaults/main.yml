@@ -1,7 +1,7 @@
 ---
 deployment_type: awx
-kind: 'AWX'
-api_version: '{{ deployment_type }}.ansible.com/v1beta1'
+kind: AWX
+api_version: "{{ deployment_type }}.ansible.com/v1beta1"
 
 database_name: "{{ deployment_type }}"
 database_username: "{{ deployment_type }}"
@@ -9,37 +9,37 @@ database_username: "{{ deployment_type }}"
 task_privileged: false
 service_type: ClusterIP
 ingress_type: none
-ingress_class_name: ''
-ingress_path: '/'
-ingress_path_type: 'Prefix'
-ingress_api_version: 'networking.k8s.io/v1'
-api_urlpattern_prefix: ''
+ingress_class_name: ""
+ingress_path: /
+ingress_path_type: Prefix
+ingress_api_version: networking.k8s.io/v1
+api_urlpattern_prefix: ""
 # Add annotations to the service account. Specify as literal block. E.g.:
 # service_account_annotations: |
 #   eks.amazonaws.com/role-arn: arn:aws:iam::<ACCOUNT_ID>:role/<IAM_ROLE_NAME>
-service_account_annotations: ''
+service_account_annotations: ""
 
 # Custom labels for the tower service. Specify as literal block. E.g.:
 # service_labels: |
 #   environment: non-production
 #   zone: internal
-service_labels: ''
+service_labels: ""
 
 # Add annotations to the ingress. Specify as literal block. E.g.:
 # ingress_annotations: |
 #   kubernetes.io/ingress.class: nginx
 #   nginx.ingress.kubernetes.io/proxy-connect-timeout: 60s
-ingress_annotations: ''
+ingress_annotations: ""
 
 # TLS secret for the ingress. The secret either has to exist before hand with
 # the corresponding cert and key or just be an indicator for where an automated
 # process like cert-manager (enabled via annotations) will store the TLS
 # certificate and key.
-ingress_tls_secret: ''
+ingress_tls_secret: ""
 
 # Special configuration for specific Ingress Controllers. E.g.:
 # ingress_controller: contour
-ingress_controller: ''
+ingress_controller: ""
 
 # One or multiple FQDN with optional Secret that contains the TLS information.
 # The TLS secret either has to exist before hand with
@@ -49,12 +49,12 @@ ingress_controller: ''
 # ingress_hosts:
 #   - hostname: awx-demo.example.com
 #     tls_secret: example-com-tls
-ingress_hosts: ''
+ingress_hosts: ""
 
-loadbalancer_protocol: 'http'
-loadbalancer_port: '80'
-loadbalancer_class: ''
-service_annotations: ''
+loadbalancer_protocol: http
+loadbalancer_port: "80"
+loadbalancer_class: ""
+service_annotations: ""
 
 # Port to be used for NodePort configuration, default is to auto-assign a port between 30000-32768
 # nodeport_port: '30080'
@@ -67,39 +67,39 @@ route_tls_termination_mechanism: edge
 # Secret to lookup that provide the TLS specific
 # credentials to deploy
 #
-route_tls_secret: ''
+route_tls_secret: ""
 
 # Route API Version to support older version
 # of the kubernetes services
-route_api_version: 'route.openshift.io/v1'
+route_api_version: route.openshift.io/v1
 
 # Host to create the root with.
 # If not specific will default to <instance-name>-<namespace>-<routerCanonicalHostname>
 #
-route_host: ''
+route_host: ""
 
-hostname: ''
-
-# Add a nodeSelector for the AWX pods. It must match a node's labels for the pod
-# to be scheduled on that node. Specify as literal block. E.g.:
-# node_selector: |
-#   kubernetes.io/arch: amd64
-#   kubernetes.io/os: linux
-node_selector: ''
+hostname: ""
 
 # Add a nodeSelector for the AWX pods. It must match a node's labels for the pod
 # to be scheduled on that node. Specify as literal block. E.g.:
 # node_selector: |
 #   kubernetes.io/arch: amd64
 #   kubernetes.io/os: linux
-web_node_selector: ''
+node_selector: ""
 
 # Add a nodeSelector for the AWX pods. It must match a node's labels for the pod
 # to be scheduled on that node. Specify as literal block. E.g.:
 # node_selector: |
 #   kubernetes.io/arch: amd64
 #   kubernetes.io/os: linux
-task_node_selector: ''
+web_node_selector: ""
+
+# Add a nodeSelector for the AWX pods. It must match a node's labels for the pod
+# to be scheduled on that node. Specify as literal block. E.g.:
+# node_selector: |
+#   kubernetes.io/arch: amd64
+#   kubernetes.io/os: linux
+task_node_selector: ""
 
 # Add a topologySpreadConstraints for the AWX pods.
 # Specify as literal block. E.g.:
@@ -110,7 +110,7 @@ task_node_selector: ''
 #     labelSelector:
 #       matchLabels:
 #         app.kubernetes.io/name: "<resourcename>"
-topology_spread_constraints: ''
+topology_spread_constraints: ""
 
 # Add a topologySpreadConstraints for the task pods.
 # Specify as literal block. E.g.:
@@ -121,7 +121,7 @@ topology_spread_constraints: ''
 #     labelSelector:
 #       matchLabels:
 #         app.kubernetes.io/name: "<resourcename>"
-task_topology_spread_constraints: ''
+task_topology_spread_constraints: ""
 
 # Add a topologySpreadConstraints for the web pods.
 # Specify as literal block. E.g.:
@@ -132,7 +132,7 @@ task_topology_spread_constraints: ''
 #     labelSelector:
 #       matchLabels:
 #         app.kubernetes.io/name: "<resourcename>"
-web_topology_spread_constraints: ''
+web_topology_spread_constraints: ""
 
 # Add node tolerations for the AWX pods. Specify as literal block. E.g.:
 # tolerations: |
@@ -140,7 +140,7 @@ web_topology_spread_constraints: ''
 #     operator: "Equal"
 #     value: "AWX"
 #     effect: "NoSchedule"
-tolerations: ''
+tolerations: ""
 
 # Add node tolerations for the task pods. Specify as literal block. E.g.:
 # task_tolerations: |
@@ -148,7 +148,7 @@ tolerations: ''
 #     operator: "Equal"
 #     value: "AWXtask"
 #     effect: "NoSchedule"
-task_tolerations: ''
+task_tolerations: ""
 
 # Add node tolerations for the web pods. Specify as literal block. E.g.:
 # web_tolerations: |
@@ -156,7 +156,7 @@ task_tolerations: ''
 #     operator: "Equal"
 #     value: "AWXweb"
 #     effect: "NoSchedule"
-web_tolerations: ''
+web_tolerations: ""
 
 # Add affinities for all pods
 #  affinity:
@@ -169,7 +169,6 @@ web_tolerations: ''
 #            values:
 #            - awx
 affinity: {}
-
 # Add affinities for all task pods
 #  affinity:
 #    nodeAffinity:
@@ -181,7 +180,6 @@ affinity: {}
 #            values:
 #            - awx-task
 task_affinity: {}
-
 # Add affinities for all web pods
 #  affinity:
 #    nodeAffinity:
@@ -193,63 +191,62 @@ task_affinity: {}
 #            values:
 #            - awx-web
 web_affinity: {}
-
 # Add annotations to awx pods. Specify as literal block. E.g.:
 # annotations: |
 #   my.annotation/1: value
 #   my.annotation/2: value2
-annotations: ''
+annotations: ""
 
 # Override annotations to awx task pods. Specify as literal block. E.g.:
 # task_annotations: |
 #   my.task-annotation/1: value
 #   my.task-annotation/2: value2
-task_annotations: ''
+task_annotations: ""
 
 # Override annotations to awx web pods. Specify as literal block. E.g.:
 # web_annotations: |
 #   my.web-annotation/1: value
 #   my.web-annotation/2: value2
-web_annotations: ''
+web_annotations: ""
 
 admin_user: admin
 admin_email: test@example.com
 
 # Secret to lookup that provide the admin password
 #
-admin_password_secret: ''
+admin_password_secret: ""
 
 # Secret to lookup that provide the broadcast websocket key
 #
-broadcast_websocket_secret: ''
+broadcast_websocket_secret: ""
 
 # Secret to lookup that provide the secret key
 #
-secret_key_secret: ''
+secret_key_secret: ""
 
 # Secret to lookup that provide the PostgreSQL configuration
 #
-postgres_configuration_secret: ''
+postgres_configuration_secret: ""
 
 # Secret to lookup that provides old database credentials (for migration)
 
-old_postgres_configuration_secret: ''
+old_postgres_configuration_secret: ""
 
 # Secret to lookup that provides default execution environment pull credentials
 #
-ee_pull_credentials_secret: ''
+ee_pull_credentials_secret: ""
 
 # Add extra volumes to the AWX pod. Specify as literal block. E.g.:
 # extra_volumes: |
 #   - name: my-volume
 #     emptyDir: {}
-extra_volumes: ''
+extra_volumes: ""
 
 # Add extra volumes to the Postgres pod. Specify as literal block. E.g.:
 # postgres_extra_volumes: |
 #   - name: my-volume
 #     emptyDir: {}
-postgres_extra_volumes: ''
+postgres_extra_volumes: ""
 
 # Use these image versions for Ansible AWX.
 
@@ -261,7 +258,6 @@ _postgres_image: quay.io/sclorg/postgresql-15-c9s
 _postgres_image_version: latest
 image_pull_policy: IfNotPresent
 image_pull_secrets: []
-
 # Extra commands which will be appended to the initContainer
 # Make sure that each command entered return an exit code 0
 # otherwise the initContainer will fail
@@ -269,22 +265,22 @@ image_pull_secrets: []
 #   date >> /var/lib/awx/projects/timestamp
 #   chgrp 1000 /shared
 #   chmod 775 /shared
-init_container_extra_commands: ''
+init_container_extra_commands: ""
 
 # Mount extra volumes on the initContainer.
 # The volume used must be defined as an `extra_volumes` resource
 # init_container_extra_volume_mounts: |
 #   - name: shared-vol
 #     mountPath: /shared
-init_container_extra_volume_mounts: ''
+init_container_extra_volume_mounts: ""
 
 ee_images:
-  - name: "AWX EE (latest)"
-    image: "quay.io/ansible/awx-ee:latest"
-  - name: "AWX EE ({{ _image_version }})"
-    image: "quay.io/ansible/awx-ee:{{ _image_version }}"
+  - name: AWX EE (latest)
+    image: quay.io/ansible/awx-ee:latest
+  - name: AWX EE ({{ _image_version }})
+    image: quay.io/ansible/awx-ee:{{ _image_version }}
 
-_control_plane_ee_image: "quay.io/ansible/awx-ee:{{ _image_version }}"
+_control_plane_ee_image: quay.io/ansible/awx-ee:{{ _image_version }}
 
 _init_container_image: "{{ _control_plane_ee_image.split(':')[0] }}"
 _init_container_image_version: "{{ _control_plane_ee_image.split(':')[1] }}"
@@ -294,8 +290,8 @@ _init_projects_container_image: quay.io/centos/centos:stream9
 create_preload_data: true
 
 replicas: 1
-web_replicas: ''
-task_replicas: ''
+web_replicas: ""
+task_replicas: ""
 
 web_liveness_period: 0
 web_readiness_period: 0
@@ -311,7 +307,6 @@ web_command: []
 rsyslog_args:
   - /usr/bin/launch_awx_rsyslog.sh
 rsyslog_command: []
-
 task_resource_requirements:
   requests:
     cpu: 100m
@@ -330,11 +325,11 @@ ee_resource_requirements:
 # TODO: validate default resource requirements
 
 # Customize CSRF options
-csrf_cookie_secure: False
-session_cookie_secure: False
+csrf_cookie_secure: false
+session_cookie_secure: false
 
 # Assign a preexisting priority class to the control plane pods
-control_plane_priority_class: ''
+control_plane_priority_class: ""
 
 redis_resource_requirements:
   requests:
@@ -358,21 +353,21 @@ init_container_resource_requirements:
 #     value: bar
 #   - name: BAZ
 #     value: bing
-task_extra_env: ''
-web_extra_env: ''
-rsyslog_extra_env: ''
-ee_extra_env: ''
+task_extra_env: ""
+web_extra_env: ""
+rsyslog_extra_env: ""
+ee_extra_env: ""
 
 # Mount extra volumes on the AWX task/web containers. Specify as literal block.
 # E.g.:
 # task_extra_volume_mounts: |
 #   - name: my-volume
 #     mountPath: /some/path
-task_extra_volume_mounts: ''
-web_extra_volume_mounts: ''
-rsyslog_extra_volume_mounts: ''
-ee_extra_volume_mounts: ''
-postgres_extra_volume_mounts: ''
+task_extra_volume_mounts: ""
+web_extra_volume_mounts: ""
+rsyslog_extra_volume_mounts: ""
+ee_extra_volume_mounts: ""
+postgres_extra_volume_mounts: ""
 
 # Add a nodeSelector for the Postgres pods.
 # It must match a node's labels for the pod to be scheduled on that node.
@@ -381,10 +376,10 @@ postgres_extra_volume_mounts: ''
 #   disktype: ssd
 #   kubernetes.io/arch: amd64
 #   kubernetes.io/os: linux
-postgres_selector: ''
+postgres_selector: ""
 
 # Specify whether or not to keep the old PVC after PostgreSQL upgrades
-postgres_keep_pvc_after_upgrade: True
+postgres_keep_pvc_after_upgrade: true
 
 # Add node tolerations for the Postgres pods.
 # Specify as literal block. E.g.:
@@ -393,7 +388,7 @@ postgres_keep_pvc_after_upgrade: True
 #     operator: "Equal"
 #     value: "AWX"
 #     effect: "NoSchedule"
-postgres_tolerations: ''
+postgres_tolerations: ""
 postgres_storage_requirements:
   requests:
     storage: 8Gi
@@ -403,17 +398,17 @@ postgres_resource_requirements:
     memory: 64Mi
 
 # Assign a preexisting priority class to the postgres pod
-postgres_priority_class: ''
+postgres_priority_class: ""
 
 # Persistence to the AWX project data folder
 # Whether or not the /var/lib/projects directory will be persistent
 projects_persistence: false
 #
 # Define an existing PersistentVolumeClaim to use
-projects_existing_claim: ''
+projects_existing_claim: ""
 #
 # Define postgres configuration arguments to use
-postgres_extra_args: ''
+postgres_extra_args: ""
 
 postgres_data_volume_init: false
 postgres_init_container_commands: |
@@ -431,17 +426,17 @@ postgres_keepalives_count: 5
 projects_storage_size: 8Gi
 projects_storage_access_mode: ReadWriteMany
 
-ca_trust_bundle: "/etc/pki/tls/certs/ca-bundle.crt"
+ca_trust_bundle: /etc/pki/tls/certs/ca-bundle.crt
 
 # Secret to lookup that provides the LDAP CACert trusted bundle
 #
-ldap_cacert_secret: ''
+ldap_cacert_secret: ""
 
 # Secret to lookup that provides the LDAP bind password
-ldap_password_secret: ''
+ldap_password_secret: ""
 
 # Secret to lookup that provides the custom CA trusted bundle
-bundle_cacert_secret: ''
+bundle_cacert_secret: ""
 
 # Whether secrets should be garbage collected
 # on teardown
@@ -452,7 +447,6 @@ development_mode: false
 
 security_context_settings: {}
 postgres_security_context_settings: {}
-
 # Set no_log settings on certain tasks
 no_log: true
 
@@ -462,7 +456,6 @@ auto_upgrade: true
 
 # Labels defined on the resource, which should be propagated to child resources
 additional_labels: []
-
 # Maintain some of the recommended `app.kubernetes.io/*` labels on the resource (self)
 set_self_labels: true
 
@@ -474,7 +467,7 @@ ipv6_disabled: false
 #       - ip: 10.10.0.10
 #         hostnames:
 #         - hostname
-host_aliases: ''
+host_aliases: ""
 
 receptor_log_level: info
 
@@ -489,7 +482,7 @@ uwsgi_listen_queue_size: 128
 # NGINX default values
 nginx_worker_processes: 1
 nginx_worker_connections: "{{ uwsgi_listen_queue_size }}"
-nginx_worker_cpu_affinity: 'auto'
+nginx_worker_cpu_affinity: auto
 nginx_listen_queue_size: "{{ uwsgi_listen_queue_size }}"
 
 # metrics-utility (github.com/ansible/metrics-utility)

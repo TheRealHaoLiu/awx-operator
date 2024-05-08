@@ -1,7 +1,7 @@
 ---
 - name: Update admin password status
   operator_sdk.util.k8s_status:
-    api_version: '{{ api_version }}'
+    api_version: "{{ api_version }}"
     kind: "{{ kind }}"
     name: "{{ ansible_operator_meta.name }}"
     namespace: "{{ ansible_operator_meta.namespace }}"
@@ -10,7 +10,7 @@
 
 - name: Update admin user status
   operator_sdk.util.k8s_status:
-    api_version: '{{ api_version }}'
+    api_version: "{{ api_version }}"
     kind: "{{ kind }}"
     name: "{{ ansible_operator_meta.name }}"
     namespace: "{{ ansible_operator_meta.namespace }}"
@@ -19,7 +19,7 @@
 
 - name: Update postgres configuration status
   operator_sdk.util.k8s_status:
-    api_version: '{{ api_version }}'
+    api_version: "{{ api_version }}"
     kind: "{{ kind }}"
     name: "{{ ansible_operator_meta.name }}"
     namespace: "{{ ansible_operator_meta.namespace }}"
@@ -28,7 +28,7 @@
 
 - name: Update broadcast websocket status
   operator_sdk.util.k8s_status:
-    api_version: '{{ api_version }}'
+    api_version: "{{ api_version }}"
     kind: "{{ kind }}"
     name: "{{ ansible_operator_meta.name }}"
     namespace: "{{ ansible_operator_meta.namespace }}"
@@ -37,7 +37,7 @@
 
 - name: Update secret key status
   operator_sdk.util.k8s_status:
-    api_version: '{{ api_version }}'
+    api_version: "{{ api_version }}"
     kind: "{{ kind }}"
     name: "{{ ansible_operator_meta.name }}"
     namespace: "{{ ansible_operator_meta.namespace }}"
@@ -57,7 +57,7 @@
 
 - name: Update version status
   operator_sdk.util.k8s_status:
-    api_version: '{{ api_version }}'
+    api_version: "{{ api_version }}"
     kind: "{{ kind }}"
     name: "{{ ansible_operator_meta.name }}"
     namespace: "{{ ansible_operator_meta.namespace }}"
@@ -67,7 +67,7 @@
 
 - name: Update image status
   operator_sdk.util.k8s_status:
-    api_version: '{{ api_version }}'
+    api_version: "{{ api_version }}"
     kind: "{{ kind }}"
     name: "{{ ansible_operator_meta.name }}"
     namespace: "{{ ansible_operator_meta.namespace }}"
@@ -77,26 +77,26 @@
 - block:
     - name: Retrieve route URL
       k8s_info:
-        api_version: 'route.openshift.io/v1'
+        api_version: route.openshift.io/v1
         kind: Route
-        namespace: '{{ ansible_operator_meta.namespace }}'
-        name: '{{ ansible_operator_meta.name }}'
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        name: "{{ ansible_operator_meta.name }}"
       register: route_url
 
     - name: Update URL status
       operator_sdk.util.k8s_status:
-        api_version: '{{ api_version }}'
+        api_version: "{{ api_version }}"
         kind: "{{ kind }}"
         name: "{{ ansible_operator_meta.name }}"
         namespace: "{{ ansible_operator_meta.namespace }}"
         status:
-          URL: "https://{{ route_url['resources'][0]['status']['ingress'][0]['host'] }}"
+          URL: https://{{ route_url['resources'][0]['status']['ingress'][0]['host'] }}
 
   when: ingress_type | lower == 'route'
 
 - name: Update migratedFromSecret status
   operator_sdk.util.k8s_status:
-    api_version: '{{ api_version }}'
+    api_version: "{{ api_version }}"
     kind: "{{ kind }}"
     name: "{{ ansible_operator_meta.name }}"
     namespace: "{{ ansible_operator_meta.namespace }}"
@@ -106,7 +106,7 @@
 
 - name: Update upgradedPostgresVersion status
   operator_sdk.util.k8s_status:
-    api_version: '{{ api_version }}'
+    api_version: "{{ api_version }}"
     kind: "{{ kind }}"
     name: "{{ ansible_operator_meta.name }}"
     namespace: "{{ ansible_operator_meta.namespace }}"

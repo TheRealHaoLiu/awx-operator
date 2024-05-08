@@ -59,8 +59,8 @@
 - name: Check for specified default execution environment pull credentials
   k8s_info:
     kind: Secret
-    namespace: '{{ ansible_operator_meta.namespace }}'
-    name: '{{ ee_pull_credentials_secret }}'
+    namespace: "{{ ansible_operator_meta.namespace }}"
+    name: "{{ ee_pull_credentials_secret }}"
   register: _custom_execution_environments_pull_credentials
   when: ee_pull_credentials_secret | length
 
@@ -108,7 +108,7 @@
       no_log: "{{ no_log }}"
   when: _execution_environments_pull_credentials['resources'] | default([]) | length
 
-- name: Create preload data if necessary.  # noqa 305
+- name: Create preload data if necessary. # noqa 305
   k8s_exec:
     namespace: "{{ ansible_operator_meta.namespace }}"
     pod: "{{ awx_web_pod_name }}"

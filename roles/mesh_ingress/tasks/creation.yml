@@ -5,7 +5,7 @@
 
 - name: Debug is_openshift
   debug:
-    msg: "is_openshift={{ is_openshift }}"
+    msg: is_openshift={{ is_openshift }}
 
 - name: Check for presence of AWX instance that we will use to create the Mesh Ingress for.
   k8s_info:
@@ -17,7 +17,7 @@
 
 - name: Fail if awx_deployment does not exist in the same namespace
   fail:
-    msg: "AWX instance {{ deployment_name }} does not exist in the same namespace as the AWXMeshIngress instance."
+    msg: AWX instance {{ deployment_name }} does not exist in the same namespace as the AWXMeshIngress instance.
   when: awx_instance.resources | length == 0
 
 - name: Set awx_spec
@@ -36,23 +36,24 @@
         name: "{{ deployment_name }}"
         namespace: "{{ ansible_operator_meta.namespace }}"
         ownerReferences:
-        - apiVersion: awx.ansible.com/v1beta1
-          blockOwnerDeletion: true
-          controller: true
-          kind: AWX
-          name: "{{ deployment_name }}"
-          uid: "{{ awx_instance.resources[0].metadata.uid }}"
+          - apiVersion: awx.ansible.com/v1beta1
+            blockOwnerDeletion: true
+            controller: true
+            kind: AWX
+            name: "{{ deployment_name }}"
+            uid: "{{ awx_instance.resources[0].metadata.uid }}"
   when: set_self_owneref | bool
 
 - name: Set user provided control plane ee image
   set_fact:
     _custom_control_plane_ee_image: "{{ awx_spec.control_plane_ee_image }}"
   when:
-  - awx_spec.control_plane_ee_image | default([]) | length
+    - awx_spec.control_plane_ee_image | default([]) | length
 
 - name: Set Control Plane EE image URL
   set_fact:
-    _control_plane_ee_image: "{{ _custom_control_plane_ee_image | default(lookup('env', 'RELATED_IMAGE_CONTROL_PLANE_EE')) | default(_control_plane_ee_image, true) }}"
+    _control_plane_ee_image: "{{ _custom_control_plane_ee_image | default(lookup('env', 'RELATED_IMAGE_CONTROL_PLANE_EE')) | default(_control_plane_ee_image, true)
+      }}"
 
 - name: Set Image Pull Policy
   set_fact:
@@ -65,9 +66,9 @@
 
 - name: Apply Ingress resource
   k8s:
-    apply: yes
+    apply: true
     definition: "{{ lookup('template', 'ingress.yml.j2') }}"
-    wait: yes
+    wait: true
     wait_timeout: "120"
   register: ingress
 
@@ -81,27 +82,27 @@
 
 - name: Create other resources
   k8s:
-    apply: yes
+    apply: true
     definition: "{{ lookup('template', '{{ item }}.yml.j2') }}"
-    wait: yes
+    wait: true
     wait_timeout: "120"
   loop:
-  - service_account
-  - receptor_conf.configmap
-  - service
-  - deployment
+    - service_account
+    - receptor_conf.configmap
+    - service
+    - deployment
 
 - name: Get the current resource task pod information.
   k8s_info:
     api_version: v1
     kind: Pod
-    namespace: '{{ ansible_operator_meta.namespace }}'
+    namespace: "{{ ansible_operator_meta.namespace }}"
     label_selectors:
-    - "app.kubernetes.io/name={{ deployment_name }}-task"
-    - "app.kubernetes.io/managed-by={{ deployment_type }}-operator"
-    - "app.kubernetes.io/component={{ deployment_type }}"
+      - app.kubernetes.io/name={{ deployment_name }}-task
+      - app.kubernetes.io/managed-by={{ deployment_type }}-operator
+      - app.kubernetes.io/component={{ deployment_type }}
     field_selectors:
-    - status.phase=Running
+      - status.phase=Running
   register: awx_task_pod
 
 - name: Set the resource pod as a variable.

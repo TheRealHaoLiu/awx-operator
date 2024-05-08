@@ -15,7 +15,7 @@
         expected_web_replicas: 0
         expected_task_replicas: 0
 
-####
+    ####
 
     - debug:
         msg: test - replicas should act as a default
@@ -31,7 +31,7 @@
         expected_web_replicas: 1
         expected_task_replicas: 2
 
-####
+    ####
 
     - debug:
         msg: test - replicas=0 should kill all pods
@@ -46,7 +46,7 @@
         expected_web_replicas: 0
         expected_task_replicas: 0
 
-####
+    ####
 
     - debug:
         msg: test - replicas=2 should give 2 of each

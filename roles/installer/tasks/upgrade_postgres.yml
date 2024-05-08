@@ -1,12 +1,9 @@
 ---
-
 # Upgrade Posgres (Managed Databases only)
 #  * If postgres version is not supported_pg_version, and not an external postgres instance (when managed_database is yes),
 #    then run this playbook with include_tasks from database_configuration.yml
 #  * Data will be streamed via a pg_dump from the postgres 12/13 pod to the postgres supported_pg_version
 #    pod via a pg_restore.
-
-
 - name: Scale down Deployment for migration
   include_tasks: scale_down_deployment.yml
 
@@ -17,7 +14,7 @@
     name: "{{ ansible_operator_meta.name }}-postgres-configuration"
     namespace: "{{ ansible_operator_meta.namespace }}"
     state: absent
-    wait: yes
+    wait: true
 
 - name: Create Database configuration with new -postgres-{{ supported_pg_version }} hostname
   k8s:
@@ -39,7 +36,7 @@
 
 - name: Set postgres label if not defined by user
   set_fact:
-    postgres_label_selector: "app.kubernetes.io/instance=postgres-{{ supported_pg_version }}-{{ ansible_operator_meta.name }}"
+    postgres_label_selector: app.kubernetes.io/instance=postgres-{{ supported_pg_version }}-{{ ansible_operator_meta.name }}
   when: postgres_label_selector is not defined
 
 - name: Get new postgres pod information
@@ -52,9 +49,9 @@
       - status.phase=Running
   register: postgres_pod
   until:
-    - "postgres_pod['resources'] | length"
-    - "postgres_pod['resources'][0]['status']['phase'] == 'Running'"
-    - "postgres_pod['resources'][0]['status']['containerStatuses'][0]['ready'] == true"
+    - postgres_pod['resources'] | length
+    - postgres_pod['resources'][0]['status']['phase'] == 'Running'
+    - postgres_pod['resources'][0]['status']['containerStatuses'][0]['ready'] == true
   delay: 5
   retries: 60
 
@@ -67,14 +64,14 @@
     kind: Service
     namespace: "{{ ansible_operator_meta.namespace }}"
     label_selectors:
-      - "app.kubernetes.io/component=database"
-      - "app.kubernetes.io/instance={{ old_postgres_pod.metadata.labels['app.kubernetes.io/instance'] }}"
-      - "app.kubernetes.io/managed-by={{ deployment_type }}-operator"
+      - app.kubernetes.io/component=database
+      - app.kubernetes.io/instance={{ old_postgres_pod.metadata.labels['app.kubernetes.io/instance'] }}
+      - app.kubernetes.io/managed-by={{ deployment_type }}-operator
   register: old_postgres_svc
 
 - name: Set full resolvable host name for postgres pod
   set_fact:
-    resolvable_db_host: "{{ old_postgres_svc['resources'][0]['metadata']['name'] }}.{{ ansible_operator_meta.namespace }}.svc"  # yamllint disable-line rule:line-length
+    resolvable_db_host: "{{ old_postgres_svc['resources'][0]['metadata']['name'] }}.{{ ansible_operator_meta.namespace }}.svc" # yamllint disable-line rule:line-length
   no_log: "{{ no_log }}"
 
 - name: Set pg_dump command
@@ -128,7 +125,7 @@
 
 - name: Set flag signifying that this instance has been migrated
   set_fact:
-    upgraded_postgres_version: '{{ supported_pg_version }}'
+    upgraded_postgres_version: "{{ supported_pg_version }}"
 
 # Cleanup old PostgreSQL resources
 - name: Remove old PostgreSQL StatefulSet

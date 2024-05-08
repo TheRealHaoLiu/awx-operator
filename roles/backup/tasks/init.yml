@@ -58,7 +58,7 @@
           metadata:
             name: "{{ deployment_name }}-backup-claim"
             namespace: "{{ backup_pvc_namespace }}"
-            ownerReferences: null
+            ownerReferences:
   when:
     - backup_pvc == '' or backup_pvc is not defined
 
@@ -88,7 +88,7 @@
 - name: Look up details for this deployment
   k8s_info:
     api_version: "{{ api_version }}"
-    kind: "AWX"
+    kind: AWX
     name: "{{ deployment_name }}"
     namespace: "{{ ansible_operator_meta.namespace }}"
   register: this_awx
