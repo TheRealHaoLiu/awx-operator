@@ -122,6 +122,12 @@ rules:
       - create
       - get
   - apiGroups:
+      - ""
+    resources:
+      - serviceaccounts/token  # needed to be able to grant TokenRequest to the AWX service account
+    verbs:
+      - create
+  - apiGroups:
       - apps
     resources:
       - replicasets
